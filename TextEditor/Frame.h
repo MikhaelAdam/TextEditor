@@ -18,9 +18,9 @@ private:
 
 protected:
 	wxPanel* main_panel;
-	wxSplitterWindow* m_splitter3;
-	wxPanel* m_panel5;
-	wxPanel* m_panel3;
+	wxSplitterWindow* splitter;
+	wxPanel* file_panel;
+	wxPanel* code_panel;
 	wxStyledTextCtrl* textCtrl;
 
 public:

@@ -7,5 +7,6 @@ bool App::OnInit()
 {
 	Frame* frame = new Frame("Editor");
 	frame->Show();
+	frame->Maximize();
     return true;
 }

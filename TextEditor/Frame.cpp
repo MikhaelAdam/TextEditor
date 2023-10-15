@@ -4,23 +4,43 @@
 Frame::Frame(const wxString &title): wxFrame(nullptr, wxID_ANY, title)
 {
 	this->SetSizeHints(wxDefaultSize, wxDefaultSize);
+	wxMenuBar *menu = new wxMenuBar();
 
-	wxBoxSizer* sizer;
-	sizer = new wxBoxSizer(wxVERTICAL);
+	wxMenu* filemenu = new wxMenu();
+	filemenu->Append(wxID_NEW);
+	filemenu->Append(wxID_OPEN);
+	filemenu->AppendSeparator();
+	filemenu->Append(wxID_SAVE);
+	filemenu->Append(wxID_SAVEAS);
+	filemenu->Append(wxID_EXIT);
+	
+	wxMenu* editmenu = new wxMenu();
+	editmenu->Append(wxID_UNDO);
+	editmenu->Append(wxID_REDO);
+	editmenu->Append(wxID_FIND);
+	editmenu->Append(wxID_REPLACE);
+	menu->Append(filemenu, "File");
+	menu->Append(editmenu, "Edit");
+	this->SetMenuBar(menu);
+	wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
 
 	main_panel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
 	wxBoxSizer* panel_sizer;
 	panel_sizer = new wxBoxSizer(wxHORIZONTAL);
 
-	m_splitter3 = new wxSplitterWindow(main_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D | wxSP_LIVE_UPDATE);
-	m_splitter3->SetSashPosition(100);
+	splitter = new wxSplitterWindow(main_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D | wxSP_LIVE_UPDATE);
+	splitter->SetSashPosition(100);
 
-	m_panel5 = new wxPanel(m_splitter3, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-	m_panel3 = new wxPanel(m_splitter3, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+	file_panel = new wxPanel(splitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+	code_panel = new wxPanel(splitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
 	wxBoxSizer* bSizer3;
 	bSizer3 = new wxBoxSizer(wxVERTICAL);
 
-	textCtrl = new wxStyledTextCtrl(m_panel3, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, wxEmptyString);
+	textCtrl = new wxStyledTextCtrl(code_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, wxEmptyString);
+	wxFont font(10, wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false);
+	textCtrl->StyleSetFont(wxSTC_STYLE_DEFAULT, font);
+
+	textCtrl->SetLexer(wxSTC_LEX_CPP);
 	textCtrl->SetUseTabs(true);
 	textCtrl->SetTabWidth(4);
 	textCtrl->SetIndent(4);
@@ -55,17 +75,22 @@ Frame::Frame(const wxString &title): wxFrame(nullptr, wxID_ANY, title)
 	textCtrl->MarkerDefine(wxSTC_MARKNUM_FOLDERTAIL, wxSTC_MARK_EMPTY);
 	textCtrl->SetSelBackground(true, wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
 	textCtrl->SetSelForeground(true, wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT));
-
+	textCtrl->StyleSetForeground(wxSTC_C_WORD, wxColour(0, 0, 255));
+	textCtrl->StyleSetForeground(wxSTC_C_DEFAULT, wxColour(0, 255, 0));
+	textCtrl->SetKeyWords(0, "if else while for int string float bool double char class private public protected struct");
+	wxString sampleCode = "if (condition)\n{\n    // code\n}";
+	
+	textCtrl->SetText(sampleCode);
 
 	bSizer3->Add(textCtrl, 1, wxEXPAND | wxALL, 5);
 
+	splitter->SetBackgroundColour(wxColour(0, 0, 0));
 
-	m_panel3->SetSizer(bSizer3);
-	m_panel3->Layout();
-	bSizer3->Fit(m_panel3);
-	m_splitter3->SplitVertically(m_panel5, m_panel3, 0);
-	panel_sizer->Add(m_splitter3, 1, wxEXPAND, 5);
-
+	code_panel->SetSizer(bSizer3);
+	code_panel->Layout();
+	bSizer3->Fit(code_panel);
+	splitter->SplitVertically(file_panel, code_panel, 0);
+	panel_sizer->Add(splitter, 1, wxEXPAND, 5);
 
 	main_panel->SetSizer(panel_sizer);
 	main_panel->Layout();
