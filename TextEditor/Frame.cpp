@@ -1,18 +1,18 @@
 #include "Frame.h"
 #include<wx\wx.h>
 
-Frame::Frame(const wxString &title): wxFrame(nullptr, wxID_ANY, title)
+Frame::Frame(const wxString &title): wxFrame(nullptr, wxID_ANY, title, wxDefaultPosition ,wxSize(1920,1080))
 {
 	this->SetSizeHints(wxDefaultSize, wxDefaultSize);
 	wxMenuBar *menu = new wxMenuBar();
 
 	wxMenu* filemenu = new wxMenu();
-	filemenu->Append(wxID_NEW);
-	filemenu->Append(wxID_OPEN);
+	filemenu->Append(wxID_NEW, "&New\tCtrl+N");
+	filemenu->Append(wxID_OPEN,"&Open\tCtrl+O");
 	filemenu->AppendSeparator();
-	filemenu->Append(wxID_SAVE);
-	filemenu->Append(wxID_SAVEAS);
-	filemenu->Append(wxID_EXIT);
+	filemenu->Append(wxID_SAVE, "&Save\tCtrl+S");
+	filemenu->Append(wxID_SAVEAS, "&Save As\tCtrl+Shift+S");
+	filemenu->Append(wxID_EXIT, "&Quit\tCtrl+Q");
 	
 	wxMenu* editmenu = new wxMenu();
 	editmenu->Append(wxID_UNDO);
@@ -22,25 +22,27 @@ Frame::Frame(const wxString &title): wxFrame(nullptr, wxID_ANY, title)
 	menu->Append(filemenu, "File");
 	menu->Append(editmenu, "Edit");
 	this->SetMenuBar(menu);
-	wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
+	wxBoxSizer* sizer;
+	sizer = new wxBoxSizer(wxVERTICAL);
 
 	main_panel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
 	wxBoxSizer* panel_sizer;
 	panel_sizer = new wxBoxSizer(wxHORIZONTAL);
 
-	splitter = new wxSplitterWindow(main_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D | wxSP_LIVE_UPDATE);
-	splitter->SetSashPosition(100);
+	splitter = new wxSplitterWindow(main_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D|wxSP_LIVE_UPDATE);
+	
 
 	file_panel = new wxPanel(splitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
 	code_panel = new wxPanel(splitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-	wxBoxSizer* bSizer3;
-	bSizer3 = new wxBoxSizer(wxVERTICAL);
+	wxBoxSizer* code_sizer;
+	code_sizer = new wxBoxSizer(wxVERTICAL);
 
-	textCtrl = new wxStyledTextCtrl(code_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, wxEmptyString);
-	wxFont font(10, wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false);
-	textCtrl->StyleSetFont(wxSTC_STYLE_DEFAULT, font);
+	notebook = new wxAuiNotebook(code_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_NB_DEFAULT_STYLE);
+	page_panel = new wxPanel(notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+	wxBoxSizer* text_sizer;
+	text_sizer = new wxBoxSizer(wxVERTICAL);
 
-	textCtrl->SetLexer(wxSTC_LEX_CPP);
+	textCtrl = new wxStyledTextCtrl(page_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, wxEmptyString);
 	textCtrl->SetUseTabs(true);
 	textCtrl->SetTabWidth(4);
 	textCtrl->SetIndent(4);
@@ -75,31 +77,59 @@ Frame::Frame(const wxString &title): wxFrame(nullptr, wxID_ANY, title)
 	textCtrl->MarkerDefine(wxSTC_MARKNUM_FOLDERTAIL, wxSTC_MARK_EMPTY);
 	textCtrl->SetSelBackground(true, wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
 	textCtrl->SetSelForeground(true, wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT));
-	textCtrl->StyleSetForeground(wxSTC_C_WORD, wxColour(0, 0, 255));
-	textCtrl->StyleSetForeground(wxSTC_C_DEFAULT, wxColour(0, 255, 0));
-	textCtrl->SetKeyWords(0, "if else while for int string float bool double char class private public protected struct");
-	wxString sampleCode = "if (condition)\n{\n    // code\n}";
-	
-	textCtrl->SetText(sampleCode);
 
-	bSizer3->Add(textCtrl, 1, wxEXPAND | wxALL, 5);
+	text_sizer->Add(textCtrl, 1, wxEXPAND | wxALL, 5);
 
-	splitter->SetBackgroundColour(wxColour(0, 0, 0));
 
-	code_panel->SetSizer(bSizer3);
+	page_panel->SetSizer(text_sizer);
+	page_panel->Layout();
+	text_sizer->Fit(page_panel);
+	notebook->AddPage(page_panel, wxT("a page"), true, wxNullBitmap);
+
+	code_sizer->Add(notebook, 1, wxEXPAND | wxALL, 5);
+
+
+	code_panel->SetSizer(code_sizer);
 	code_panel->Layout();
-	bSizer3->Fit(code_panel);
-	splitter->SplitVertically(file_panel, code_panel, 0);
+	code_sizer->Fit(code_panel);
+	splitter->SplitVertically(file_panel, code_panel, 167);
 	panel_sizer->Add(splitter, 1, wxEXPAND, 5);
+
 
 	main_panel->SetSizer(panel_sizer);
 	main_panel->Layout();
 	panel_sizer->Fit(main_panel);
-	sizer->Add(main_panel, 1, wxEXPAND | wxALL, 5);
-
-
-	this->SetSizer(sizer);
-	this->Layout();
 
 	this->Centre(wxBOTH);
+	this->Connect(wxID_EXIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Frame::OnQuit));
+	this->Connect(wxID_SAVEAS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Frame::OnSaveAs));
+	this->Connect(wxID_SAVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Frame::OnSave));
+	this->Connect(wxID_NEW, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Frame::OnNew));
+	this->Connect(wxID_OPEN, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Frame::OnOpen));
+
+}
+
+void Frame::OnQuit(wxCommandEvent& e)
+{
+	this->Close();
+}
+
+void Frame::OnSave(wxCommandEvent& e)
+{
+	wxMessageBox("Simple Save");
+}
+
+void Frame::OnOpen(wxCommandEvent& e)
+{
+	wxMessageBox("Open a file");
+}
+
+void Frame::OnNew(wxCommandEvent& e)
+{
+	wxMessageBox("Create file");
+}
+
+void Frame::OnSaveAs(wxCommandEvent& e)
+{
+	wxMessageBox("Save ass");
 }

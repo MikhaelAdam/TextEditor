@@ -1,17 +1,9 @@
 #pragma once
 #include<wx/wx.h>
-#include <wx/artprov.h>
-#include <wx/xrc/xmlres.h>
-#include <wx/panel.h>
-#include <wx/gdicmn.h>
-#include <wx/font.h>
-#include <wx/colour.h>
-#include <wx/settings.h>
-#include <wx/string.h>
-#include <wx/stc/stc.h>
-#include <wx/sizer.h>
-#include <wx/splitter.h>
-#include <wx/frame.h>
+#include<wx/splitter.h>
+#include<wx/stc/stc.h>
+#include <wx/aui/auibook.h>
+
 class Frame: public wxFrame
 {
 private:
@@ -21,10 +13,17 @@ protected:
 	wxSplitterWindow* splitter;
 	wxPanel* file_panel;
 	wxPanel* code_panel;
+	wxAuiNotebook* notebook;
+	wxPanel* page_panel;
 	wxStyledTextCtrl* textCtrl;
 
 public:
 
 	Frame(const wxString& title = wxEmptyString);
+	void OnQuit(wxCommandEvent& e);
+	void OnSave(wxCommandEvent& e);
+	void OnOpen(wxCommandEvent& e);
+	void OnNew(wxCommandEvent& e);
+	void OnSaveAs(wxCommandEvent& e);
 };
 
