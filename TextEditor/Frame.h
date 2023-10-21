@@ -3,20 +3,12 @@
 #include<wx/splitter.h>
 #include<wx/stc/stc.h>
 #include <wx/aui/auibook.h>
-
+#include "Codetab.h"
 class Frame: public wxFrame
 {
-private:
-
 protected:
-	wxPanel* main_panel;
-	wxSplitterWindow* splitter;
-	wxPanel* file_panel;
-	wxPanel* code_panel;
 	wxAuiNotebook* notebook;
-	wxPanel* page_panel;
-	wxStyledTextCtrl* textCtrl;
-
+	  wxFont font;
 public:
 
 	Frame(const wxString& title = wxEmptyString);

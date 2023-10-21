@@ -1,5 +1,5 @@
 #include "Frame.h"
-#include<wx\wx.h>
+#include "Codetab.h"
 
 Frame::Frame(const wxString &title): wxFrame(nullptr, wxID_ANY, title, wxDefaultPosition ,wxSize(1920,1080))
 {
@@ -25,76 +25,34 @@ Frame::Frame(const wxString &title): wxFrame(nullptr, wxID_ANY, title, wxDefault
 	wxBoxSizer* sizer;
 	sizer = new wxBoxSizer(wxVERTICAL);
 
-	main_panel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+	wxPanel *main_panel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
 	wxBoxSizer* panel_sizer;
 	panel_sizer = new wxBoxSizer(wxHORIZONTAL);
 
-	splitter = new wxSplitterWindow(main_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D|wxSP_LIVE_UPDATE);
+	wxSplitterWindow *splitter = new wxSplitterWindow(main_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D|wxSP_LIVE_UPDATE);
 	
 
-	file_panel = new wxPanel(splitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-	code_panel = new wxPanel(splitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-	wxBoxSizer* code_sizer;
-	code_sizer = new wxBoxSizer(wxVERTICAL);
+	wxPanel *file_panel = new wxPanel(splitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+	wxPanel *code_panel = new wxPanel(splitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+	wxBoxSizer* code_sizer = new wxBoxSizer(wxVERTICAL);
 
-	notebook = new wxAuiNotebook(code_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_NB_DEFAULT_STYLE);
-	page_panel = new wxPanel(notebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-	wxBoxSizer* text_sizer;
-	text_sizer = new wxBoxSizer(wxVERTICAL);
+	notebook = new wxAuiNotebook(code_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_NB_DEFAULT_STYLE| wxAUI_NB_TAB_MOVE| wxAUI_NB_SCROLL_BUTTONS);
 
-	textCtrl = new wxStyledTextCtrl(page_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, wxEmptyString);
-	textCtrl->SetUseTabs(true);
-	textCtrl->SetTabWidth(4);
-	textCtrl->SetIndent(4);
-	textCtrl->SetTabIndents(true);
-	textCtrl->SetBackSpaceUnIndents(true);
-	textCtrl->SetViewEOL(false);
-	textCtrl->SetViewWhiteSpace(false);
-	textCtrl->SetMarginWidth(2, 0);
-	textCtrl->SetIndentationGuides(true);
-	textCtrl->SetMarginType(1, wxSTC_MARGIN_SYMBOL);
-	textCtrl->SetMarginMask(1, wxSTC_MASK_FOLDERS);
-	textCtrl->SetMarginWidth(1, 16);
-	textCtrl->SetMarginSensitive(1, true);
-	textCtrl->SetProperty(wxT("fold"), wxT("1"));
-	textCtrl->SetFoldFlags(wxSTC_FOLDFLAG_LINEBEFORE_CONTRACTED | wxSTC_FOLDFLAG_LINEAFTER_CONTRACTED);
-	textCtrl->SetMarginType(0, wxSTC_MARGIN_NUMBER);
-	textCtrl->SetMarginWidth(0, textCtrl->TextWidth(wxSTC_STYLE_LINENUMBER, wxT("_99999")));
-	textCtrl->MarkerDefine(wxSTC_MARKNUM_FOLDER, wxSTC_MARK_BOXPLUS);
-	textCtrl->MarkerSetBackground(wxSTC_MARKNUM_FOLDER, wxColour(wxT("BLACK")));
-	textCtrl->MarkerSetForeground(wxSTC_MARKNUM_FOLDER, wxColour(wxT("WHITE")));
-	textCtrl->MarkerDefine(wxSTC_MARKNUM_FOLDEROPEN, wxSTC_MARK_BOXMINUS);
-	textCtrl->MarkerSetBackground(wxSTC_MARKNUM_FOLDEROPEN, wxColour(wxT("BLACK")));
-	textCtrl->MarkerSetForeground(wxSTC_MARKNUM_FOLDEROPEN, wxColour(wxT("WHITE")));
-	textCtrl->MarkerDefine(wxSTC_MARKNUM_FOLDERSUB, wxSTC_MARK_EMPTY);
-	textCtrl->MarkerDefine(wxSTC_MARKNUM_FOLDEREND, wxSTC_MARK_BOXPLUS);
-	textCtrl->MarkerSetBackground(wxSTC_MARKNUM_FOLDEREND, wxColour(wxT("BLACK")));
-	textCtrl->MarkerSetForeground(wxSTC_MARKNUM_FOLDEREND, wxColour(wxT("WHITE")));
-	textCtrl->MarkerDefine(wxSTC_MARKNUM_FOLDEROPENMID, wxSTC_MARK_BOXMINUS);
-	textCtrl->MarkerSetBackground(wxSTC_MARKNUM_FOLDEROPENMID, wxColour(wxT("BLACK")));
-	textCtrl->MarkerSetForeground(wxSTC_MARKNUM_FOLDEROPENMID, wxColour(wxT("WHITE")));
-	textCtrl->MarkerDefine(wxSTC_MARKNUM_FOLDERMIDTAIL, wxSTC_MARK_EMPTY);
-	textCtrl->MarkerDefine(wxSTC_MARKNUM_FOLDERTAIL, wxSTC_MARK_EMPTY);
-	textCtrl->SetSelBackground(true, wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
-	textCtrl->SetSelForeground(true, wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT));
+	wxBoxSizer* text_sizer = new wxBoxSizer(wxVERTICAL);
 
-	text_sizer->Add(textCtrl, 1, wxEXPAND | wxALL, 5);
-
-
-	page_panel->SetSizer(text_sizer);
-	page_panel->Layout();
-	text_sizer->Fit(page_panel);
-	notebook->AddPage(page_panel, wxT("a page"), true, wxNullBitmap);
-
+	//Create a codetab and add it to the notebook
+	Codetab* codetab = new Codetab(notebook);
+	notebook->AddPage(codetab, wxT("cpp"));
 	code_sizer->Add(notebook, 1, wxEXPAND | wxALL, 5);
 
-
+	//Organize the panels in sizers
 	code_panel->SetSizer(code_sizer);
 	code_panel->Layout();
 	code_sizer->Fit(code_panel);
 	splitter->SplitVertically(file_panel, code_panel, 167);
 	panel_sizer->Add(splitter, 1, wxEXPAND, 5);
-
+	file_panel->SetBackgroundColour(*wxBLUE);
+	code_panel->SetBackgroundColour(*wxRED);
 
 	main_panel->SetSizer(panel_sizer);
 	main_panel->Layout();
@@ -126,7 +84,9 @@ void Frame::OnOpen(wxCommandEvent& e)
 
 void Frame::OnNew(wxCommandEvent& e)
 {
-	wxMessageBox("Create file");
+	Codetab* codetab = new Codetab(notebook);
+	notebook->AddPage(codetab, wxT("cpp"));
+	
 }
 
 void Frame::OnSaveAs(wxCommandEvent& e)
