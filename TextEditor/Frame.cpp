@@ -36,7 +36,8 @@ Frame::Frame(const wxString &title): wxFrame(nullptr, wxID_ANY, title, wxDefault
 	wxPanel *code_panel = new wxPanel(splitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
 	wxBoxSizer* code_sizer = new wxBoxSizer(wxVERTICAL);
 
-	notebook = new wxAuiNotebook(code_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_NB_DEFAULT_STYLE| wxAUI_NB_TAB_MOVE| wxAUI_NB_SCROLL_BUTTONS);
+	notebook = new wxAuiNotebook(code_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_NB_DEFAULT_STYLE);
+
 
 	wxBoxSizer* text_sizer = new wxBoxSizer(wxVERTICAL);
 
@@ -51,8 +52,6 @@ Frame::Frame(const wxString &title): wxFrame(nullptr, wxID_ANY, title, wxDefault
 	code_sizer->Fit(code_panel);
 	splitter->SplitVertically(file_panel, code_panel, 167);
 	panel_sizer->Add(splitter, 1, wxEXPAND, 5);
-	file_panel->SetBackgroundColour(*wxBLUE);
-	code_panel->SetBackgroundColour(*wxRED);
 
 	main_panel->SetSizer(panel_sizer);
 	main_panel->Layout();
@@ -67,6 +66,15 @@ Frame::Frame(const wxString &title): wxFrame(nullptr, wxID_ANY, title, wxDefault
 
 }
 
+void Frame::OnTabBeginDrag(wxAuiNotebookEvent& evt)
+{
+	Refresh();
+	Update();
+	evt.Skip();
+}
+
+
+
 void Frame::OnQuit(wxCommandEvent& e)
 {
 	this->Close();
@@ -74,7 +82,7 @@ void Frame::OnQuit(wxCommandEvent& e)
 
 void Frame::OnSave(wxCommandEvent& e)
 {
-	wxMessageBox("Simple Save");
+	
 }
 
 void Frame::OnOpen(wxCommandEvent& e)
