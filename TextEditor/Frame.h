@@ -3,16 +3,18 @@
 #include<wx/splitter.h>
 #include<wx/stc/stc.h>
 #include <wx/aui/aui.h>
+#include <vector>
 #include "Codetab.h"
 class Frame: public wxFrame
 {
 protected:
 	wxAuiNotebook* notebook;
 	wxFont font;
+	std::vector<int> pageindex;
 public:
 
 	Frame(const wxString& title = wxEmptyString);
-	void OnTabBeginDrag(wxAuiNotebookEvent& evt);
+
 	void OnQuit(wxCommandEvent& e);
 	void OnSave(wxCommandEvent& e);
 	void OnOpen(wxCommandEvent& e);

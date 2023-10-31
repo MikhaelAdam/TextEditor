@@ -1,9 +1,8 @@
 #include "Frame.h"
 #include "Codetab.h"
 
-Frame::Frame(const wxString &title): wxFrame(nullptr, wxID_ANY, title, wxDefaultPosition ,wxSize(1920,1080))
+Frame::Frame(const wxString &title): wxFrame(nullptr, wxID_ANY, title, wxDefaultPosition ,wxDefaultSize)
 {
-	this->SetSizeHints(wxDefaultSize, wxDefaultSize);
 	wxMenuBar *menu = new wxMenuBar();
 
 	wxMenu* filemenu = new wxMenu();
@@ -26,10 +25,9 @@ Frame::Frame(const wxString &title): wxFrame(nullptr, wxID_ANY, title, wxDefault
 	sizer = new wxBoxSizer(wxVERTICAL);
 
 	wxPanel *main_panel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-	wxBoxSizer* panel_sizer;
-	panel_sizer = new wxBoxSizer(wxHORIZONTAL);
+	wxBoxSizer* panel_sizer = new wxBoxSizer(wxHORIZONTAL);
 
-	wxSplitterWindow *splitter = new wxSplitterWindow(main_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D|wxSP_LIVE_UPDATE);
+	wxSplitterWindow *splitter = new wxSplitterWindow(main_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_NO_XP_THEME | wxSP_LIVE_UPDATE);
 	
 
 	wxPanel *file_panel = new wxPanel(splitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
@@ -42,22 +40,21 @@ Frame::Frame(const wxString &title): wxFrame(nullptr, wxID_ANY, title, wxDefault
 	wxBoxSizer* text_sizer = new wxBoxSizer(wxVERTICAL);
 
 	//Create a codetab and add it to the notebook
-	Codetab* codetab = new Codetab(notebook);
-	notebook->AddPage(codetab, wxT("cpp"));
 	code_sizer->Add(notebook, 1, wxEXPAND | wxALL, 5);
 
 	//Organize the panels in sizers
-	code_panel->SetSizer(code_sizer);
+	code_panel->SetSizerAndFit(code_sizer);
 	code_panel->Layout();
-	code_sizer->Fit(code_panel);
+	
 	splitter->SplitVertically(file_panel, code_panel, 167);
 	panel_sizer->Add(splitter, 1, wxEXPAND, 5);
 
-	main_panel->SetSizer(panel_sizer);
+	main_panel->SetSizerAndFit(panel_sizer);
 	main_panel->Layout();
-	panel_sizer->Fit(main_panel);
+
 
 	this->Centre(wxBOTH);
+
 	this->Connect(wxID_EXIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Frame::OnQuit));
 	this->Connect(wxID_SAVEAS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Frame::OnSaveAs));
 	this->Connect(wxID_SAVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(Frame::OnSave));
@@ -66,23 +63,19 @@ Frame::Frame(const wxString &title): wxFrame(nullptr, wxID_ANY, title, wxDefault
 
 }
 
-void Frame::OnTabBeginDrag(wxAuiNotebookEvent& evt)
-{
-	Refresh();
-	Update();
-	evt.Skip();
-}
+
 
 
 
 void Frame::OnQuit(wxCommandEvent& e)
 {
 	this->Close();
+	e.Skip();
 }
 
 void Frame::OnSave(wxCommandEvent& e)
 {
-	
+
 }
 
 void Frame::OnOpen(wxCommandEvent& e)
@@ -93,11 +86,13 @@ void Frame::OnOpen(wxCommandEvent& e)
 void Frame::OnNew(wxCommandEvent& e)
 {
 	Codetab* codetab = new Codetab(notebook);
-	notebook->AddPage(codetab, wxT("cpp"));
+	notebook->AddPage(codetab, wxT("untitled"));
+	e.Skip();
 	
 }
 
 void Frame::OnSaveAs(wxCommandEvent& e)
 {
 	wxMessageBox("Save ass");
+	e.Skip();
 }
