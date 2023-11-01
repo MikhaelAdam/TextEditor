@@ -1,9 +1,10 @@
 #include "Frame.h"
 #include "Codetab.h"
 
-Frame::Frame(const wxString& title) : wxFrame(nullptr, wxID_ANY, title, wxDefaultPosition, wxDefaultSize)
+Frame::Frame(const wxString &title): wxFrame(nullptr, wxID_ANY, title, wxDefaultPosition , wxDefaultSize)
 {
-	wxMenuBar* menu = new wxMenuBar();
+
+	wxMenuBar *menu = new wxMenuBar();
 
 	wxMenu* filemenu = new wxMenu();
 	filemenu->Append(wxID_NEW, "&New\tCtrl+N");
@@ -24,12 +25,11 @@ Frame::Frame(const wxString& title) : wxFrame(nullptr, wxID_ANY, title, wxDefaul
 	wxBoxSizer* sizer;
 	sizer = new wxBoxSizer(wxVERTICAL);
 
-	wxPanel* main_panel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-	wxBoxSizer* panel_sizer = new wxBoxSizer(wxHORIZONTAL);
-
-	wxSplitterWindow* splitter = new wxSplitterWindow(main_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_NO_XP_THEME | wxSP_LIVE_UPDATE);
-
-
+	wxPanel *main_panel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+	wxBoxSizer* panel_sizer;
+	panel_sizer = new wxBoxSizer(wxHORIZONTAL);
+	wxSplitterWindow *splitter = new wxSplitterWindow(main_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D|wxSP_LIVE_UPDATE);
+	
 	wxPanel* file_panel = new wxPanel(splitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
 	wxPanel* code_panel = new wxPanel(splitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
 	wxBoxSizer* code_sizer = new wxBoxSizer(wxVERTICAL);
@@ -45,13 +45,13 @@ Frame::Frame(const wxString& title) : wxFrame(nullptr, wxID_ANY, title, wxDefaul
 	//Organize the panels in sizers
 	code_panel->SetSizerAndFit(code_sizer);
 	code_panel->Layout();
-
-	splitter->SplitVertically(file_panel, code_panel, 167);
+	code_sizer->Fit(code_panel);
+	splitter->SplitVertically(file_panel, code_panel);
 	panel_sizer->Add(splitter, 1, wxEXPAND, 5);
 
 	main_panel->SetSizerAndFit(panel_sizer);
 	main_panel->Layout();
-
+	panel_sizer->Fit(main_panel);
 
 	this->Centre(wxBOTH);
 
@@ -113,13 +113,11 @@ void Frame::OnOpen(wxCommandEvent& e)
 void Frame::OnNew(wxCommandEvent& e)
 {
 	Codetab* codetab = new Codetab(notebook);
-	notebook->AddPage(codetab, wxT("untitled"));
-	e.Skip();
+	notebook->AddPage(codetab, wxT("cpp"));
 
 }
 
 void Frame::OnSaveAs(wxCommandEvent& e)
 {
 	wxMessageBox("Save ass");
-	e.Skip();
 }

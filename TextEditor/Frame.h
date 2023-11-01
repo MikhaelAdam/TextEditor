@@ -4,7 +4,7 @@
 #include<wx/stc/stc.h>
 #include <wx/aui/aui.h>
 #include <wx/filedlg.h>	
-#include <wx/file.h>	
+#include <wx/file.h>
 #include <fstream>
 #include "Codetab.h"
 class Frame: public wxFrame
