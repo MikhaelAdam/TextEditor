@@ -1,18 +1,19 @@
 #include "Frame.h"
 #include "Codetab.h"
 
-Frame::Frame(const wxString &title): wxFrame(nullptr, wxID_ANY, title, wxDefaultPosition ,wxDefaultSize)
+Frame::Frame(const wxString &title): wxFrame(nullptr, wxID_ANY, title, wxDefaultPosition , wxDefaultSize)
 {
+
 	wxMenuBar *menu = new wxMenuBar();
 
 	wxMenu* filemenu = new wxMenu();
 	filemenu->Append(wxID_NEW, "&New\tCtrl+N");
-	filemenu->Append(wxID_OPEN,"&Open\tCtrl+O");
+	filemenu->Append(wxID_OPEN, "&Open\tCtrl+O");
 	filemenu->AppendSeparator();
 	filemenu->Append(wxID_SAVE, "&Save\tCtrl+S");
 	filemenu->Append(wxID_SAVEAS, "&Save As\tCtrl+Shift+S");
 	filemenu->Append(wxID_EXIT, "&Quit\tCtrl+Q");
-	
+
 	wxMenu* editmenu = new wxMenu();
 	editmenu->Append(wxID_UNDO);
 	editmenu->Append(wxID_REDO);
@@ -25,13 +26,12 @@ Frame::Frame(const wxString &title): wxFrame(nullptr, wxID_ANY, title, wxDefault
 	sizer = new wxBoxSizer(wxVERTICAL);
 
 	wxPanel *main_panel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-	wxBoxSizer* panel_sizer = new wxBoxSizer(wxHORIZONTAL);
-
-	wxSplitterWindow *splitter = new wxSplitterWindow(main_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_NO_XP_THEME | wxSP_LIVE_UPDATE);
+	wxBoxSizer* panel_sizer;
+	panel_sizer = new wxBoxSizer(wxHORIZONTAL);
+	wxSplitterWindow *splitter = new wxSplitterWindow(main_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_3D|wxSP_LIVE_UPDATE);
 	
-
-	wxPanel *file_panel = new wxPanel(splitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-	wxPanel *code_panel = new wxPanel(splitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+	wxPanel* file_panel = new wxPanel(splitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+	wxPanel* code_panel = new wxPanel(splitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
 	wxBoxSizer* code_sizer = new wxBoxSizer(wxVERTICAL);
 
 	notebook = new wxAuiNotebook(code_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_NB_DEFAULT_STYLE);
@@ -45,13 +45,13 @@ Frame::Frame(const wxString &title): wxFrame(nullptr, wxID_ANY, title, wxDefault
 	//Organize the panels in sizers
 	code_panel->SetSizerAndFit(code_sizer);
 	code_panel->Layout();
-	
-	splitter->SplitVertically(file_panel, code_panel, 167);
+	code_sizer->Fit(code_panel);
+	splitter->SplitVertically(file_panel, code_panel);
 	panel_sizer->Add(splitter, 1, wxEXPAND, 5);
 
 	main_panel->SetSizerAndFit(panel_sizer);
 	main_panel->Layout();
-
+	panel_sizer->Fit(main_panel);
 
 	this->Centre(wxBOTH);
 
@@ -80,7 +80,6 @@ void Frame::OnSave(wxCommandEvent& e)
 
 void Frame::OnOpen(wxCommandEvent& e)
 {
-	
 	wxFileDialog openFileDialog(this, "Open File", "", "", "C++ Files (*.cpp;*.h)|*.cpp;*.h|Text Files(*.txt)|*.txt|All Files (*.*)|*.*", wxFD_OPEN | wxFD_FILE_MUST_EXIST);
 
 	if (openFileDialog.ShowModal() == wxID_CANCEL) {
@@ -109,6 +108,7 @@ void Frame::OnOpen(wxCommandEvent& e)
 	codetab->stc_tab->SetText(fileContents);
 	notebook->AddPage(codetab, fileName);
 }
+ 
 
 void Frame::OnNew(wxCommandEvent& e)
 {
@@ -116,11 +116,9 @@ void Frame::OnNew(wxCommandEvent& e)
 	codetab->stc_tab->SetText(wxT("Wassub Beijing"));
 	notebook->AddPage(codetab, wxT("untitled"));
 	e.Skip();
-	
 }
 
 void Frame::OnSaveAs(wxCommandEvent& e)
 {
 	wxMessageBox("Save ass");
-	e.Skip();
 }

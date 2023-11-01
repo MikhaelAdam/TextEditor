@@ -4,15 +4,15 @@ Codetab::Codetab(wxWindow* m_parent) : wxPanel(m_parent , wxID_ANY, wxDefaultPos
 {
 	stc_tab = new wxStyledTextCtrl(this, wxID_ANY);
 	wxFont font(10, wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
+	stc_tab->SetLexer(wxSTC_LEX_CPP);
 	stc_tab->StyleSetFont(wxSTC_STYLE_DEFAULT, font);
-	stc_tab->SetViewEOL(true);
+	stc_tab->SetViewEOL(false);
 	stc_tab->SetMarginWidth(1, 0);
 	stc_tab->SetUseTabs(true);
 	stc_tab->SetTabWidth(4);
 	stc_tab->SetIndent(4);
 	stc_tab->SetTabIndents(true);
 	stc_tab->SetBackSpaceUnIndents(true);
-	stc_tab->SetViewEOL(false);
 	stc_tab->SetViewWhiteSpace(false);
 	stc_tab->SetMarginWidth(2, 0);
 	stc_tab->SetIndentationGuides(true);
@@ -41,6 +41,9 @@ Codetab::Codetab(wxWindow* m_parent) : wxPanel(m_parent , wxID_ANY, wxDefaultPos
 	stc_tab->MarkerDefine(wxSTC_MARKNUM_FOLDERTAIL, wxSTC_MARK_EMPTY);
 	stc_tab->SetSelBackground(true, wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
 	stc_tab->SetSelForeground(true, wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT));
+	stc_tab->SetKeyWords(0, "int string char bool float double");
+	stc_tab->StyleSetForeground(wxSTC_C_WORD, wxColour(0, 0, 225));
+	
 	wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
 	sizer->Add(stc_tab, 1, wxEXPAND);
 	SetSizer(sizer);
