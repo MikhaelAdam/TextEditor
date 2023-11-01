@@ -1,7 +1,6 @@
 #include "App.h"
 #include "Frame.h"
-#include <wx/app.h>
-#include<wx\wx.h>
+
 
 wxIMPLEMENT_APP(App);
 bool App::OnInit()

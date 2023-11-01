@@ -3,6 +3,9 @@
 #include<wx/splitter.h>
 #include<wx/stc/stc.h>
 #include <wx/aui/aui.h>
+#include <wx/filedlg.h>	
+#include <wx/file.h>	
+#include <fstream>
 #include "Codetab.h"
 class Frame: public wxFrame
 {
@@ -12,7 +15,7 @@ protected:
 public:
 
 	Frame(const wxString& title = wxEmptyString);
-	void OnTabBeginDrag(wxAuiNotebookEvent& evt);
+
 	void OnQuit(wxCommandEvent& e);
 	void OnSave(wxCommandEvent& e);
 	void OnOpen(wxCommandEvent& e);
