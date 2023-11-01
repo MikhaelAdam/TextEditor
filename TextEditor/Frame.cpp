@@ -35,7 +35,7 @@ Frame::Frame(const wxString &title): wxFrame(nullptr, wxID_ANY, title, wxDefault
 	wxBoxSizer* code_sizer = new wxBoxSizer(wxVERTICAL);
 
 	notebook = new wxAuiNotebook(code_panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_NB_DEFAULT_STYLE);
-
+	openFileDialog = new wxFileDialog(this, "Open File", "", "", "All files (*.*)|*.*", wxFD_OPEN);
 
 	wxBoxSizer* text_sizer = new wxBoxSizer(wxVERTICAL);
 
@@ -80,12 +80,40 @@ void Frame::OnSave(wxCommandEvent& e)
 
 void Frame::OnOpen(wxCommandEvent& e)
 {
-	wxMessageBox("Open a file");
+	
+	wxFileDialog openFileDialog(this, "Open File", "", "", "C++ Files (*.cpp;*.h)|*.cpp;*.h|Text Files(*.txt)|*.txt|All Files (*.*)|*.*", wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+
+	if (openFileDialog.ShowModal() == wxID_CANCEL) {
+		return;
+	}
+
+	wxString filePath = openFileDialog.GetPath();
+	wxString fileName = openFileDialog.GetFilename();
+
+	std::ifstream file(filePath.ToStdString());
+	if (!file.is_open()) {
+		wxLogError("Failed to open the file.");
+		return;
+	}
+
+	// Read the file content into a wxString
+	wxString fileContents;
+	std::string line;
+	while (std::getline(file, line)) {
+		fileContents += wxString::FromUTF8(line.c_str()) + "\n";
+	}
+
+	file.close();
+
+	Codetab* codetab = new Codetab(notebook);
+	codetab->stc_tab->SetText(fileContents);
+	notebook->AddPage(codetab, fileName);
 }
 
 void Frame::OnNew(wxCommandEvent& e)
 {
 	Codetab* codetab = new Codetab(notebook);
+	codetab->stc_tab->SetText(wxT("Wassub Beijing"));
 	notebook->AddPage(codetab, wxT("untitled"));
 	e.Skip();
 	

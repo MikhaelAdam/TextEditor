@@ -5,6 +5,7 @@ class Codetab : public wxPanel
 {
 public:
 	Codetab(wxWindow* m_parent);
+	wxStyledTextCtrl* stc_tab;
 
 };
 

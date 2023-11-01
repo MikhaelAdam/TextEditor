@@ -3,14 +3,15 @@
 #include<wx/splitter.h>
 #include<wx/stc/stc.h>
 #include <wx/aui/aui.h>
-#include <vector>
+#include <wx/file.h>
+#include <fstream>
 #include "Codetab.h"
 class Frame: public wxFrame
 {
 protected:
 	wxAuiNotebook* notebook;
 	wxFont font;
-	std::vector<int> pageindex;
+	wxFileDialog* openFileDialog;
 public:
 
 	Frame(const wxString& title = wxEmptyString);

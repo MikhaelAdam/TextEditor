@@ -2,7 +2,7 @@
 
 Codetab::Codetab(wxWindow* m_parent) : wxPanel(m_parent , wxID_ANY, wxDefaultPosition, wxDefaultSize)
 {
-	wxStyledTextCtrl *stc_tab = new wxStyledTextCtrl(this, wxID_ANY);
+	stc_tab = new wxStyledTextCtrl(this, wxID_ANY);
 	wxFont font(10, wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
 	stc_tab->StyleSetFont(wxSTC_STYLE_DEFAULT, font);
 	stc_tab->SetViewEOL(true);
